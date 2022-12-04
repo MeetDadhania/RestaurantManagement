@@ -1,0 +1,83 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    background-image: url('../Image/Bgimage.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment:fixed;
+    opacity:1;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+    background-color: #777;
+    border-color: #fff
+}
+
+.footer {
+    padding:0px;
+    position: fixed;
+    background: rgb(255, 255, 255,0.5);
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: #000000;
+    text-align: center;
+}
+
+/*------------------------------------------------------------------------------*/
+
+.menu .tab-content .menu-item {
+    -moz-text-align-last: center;
+    text-align-last: center;
+}
+
+    .menu .tab-content .menu-item .menu-img {
+        padding: 0 60px;
+        margin-bottom: 15px;
+    }
+
+    .menu .tab-content .menu-item h4 {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--color-secondary);
+        font-family: var(--font-secondary);
+        font-weight: 30px;
+        margin-bottom: 5px;
+    }
+
+    .menu .tab-content .menu-item .ingredients {
+        font-family: var(--font-secondary);
+        color: #8d8d9b;
+        margin-bottom: 5px;
+    }
+
+    .menu .tab-content .menu-item .price {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--color-primary);
+    }
+
+
+/*--------------------------------switch Slide------------------------------------------------------*/
+
