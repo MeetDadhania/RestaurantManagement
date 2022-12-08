@@ -20,20 +20,20 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 <div class="form-group row">
 
-    @Html.LabelFor(l => l.UserName, new { @class = "col-sm-2 col-form-label", style = "color: #ffffff;" })
+    @Html.LabelFor(l => l.UserName, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
     <div class="col-sm-10">
         @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name...", style = "margin-bottom : 7px" })
         @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
     </div>
     <br />
 
-    @Html.LabelFor(l => l.Password, new { @class = "col-sm-2 col-form-label", style = "color: #ffffff;" })
+    @Html.LabelFor(l => l.Password, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
     <div class="col-sm-10">
         @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password...", style = "margin-bottom : 7px" })
         @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
     </div>
 
-    @Html.LabelFor(l => l.ConfirmPassword, new { @class = "col-sm-2 col-form-label", style = "color: #ffffff;" })
+    @Html.LabelFor(l => l.ConfirmPassword, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
     <div class="col-sm-10">
         @Html.PasswordFor(s => s.ConfirmPassword, new { @class = "", placeholder = "Enter Confirm Password...", style = "margin-bottom : 7px" })
         @Html.ValidationMessageFor(s => s.ConfirmPassword, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
@@ -41,14 +41,14 @@
 
     <br />
 
-    @Html.LabelFor(l => l.Email, new { @class = "col-sm-2 col-form-label", style = "color: #ffffff;" })
+    @Html.LabelFor(l => l.Email, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
     <div class="col-sm-10">
         @Html.TextBoxFor(s => s.Email, new { @class = "", placeholder = "Enter Email...", style = "margin-bottom : 7px" })
         @Html.ValidationMessageFor(s => s.Email, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
     </div>
     <br />
 
-    @Html.LabelFor(l => l.Mobile, new { @class = "col-sm-2 col-form-label", style = "color: #ffffff;" })
+    @Html.LabelFor(l => l.Mobile, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
     <div class="col-sm-10">
         @Html.TextBoxFor(s => s.Mobile, new { @class = "", placeholder = "Enter Mobile...", style = "margin-bottom : 7px" })
         @Html.ValidationMessageFor(s => s.Mobile, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })

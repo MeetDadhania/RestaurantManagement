@@ -9,7 +9,7 @@ namespace FirstWebApplication.Models
 {
     public class UserLogin
     {
-        [Display(Name = "UserName")]
+        [Display(Name = "User Name")]
         [Required(ErrorMessage = "UserName is Required..")]
         public string UserName { get; set; }
 

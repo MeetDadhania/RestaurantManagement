@@ -1,8 +1,10 @@
-﻿@model List<MenuDetail>
+﻿@using PagedList
+@using PagedList.Mvc
+
+@model IPagedList<MenuDetail>
 
 @{
     ViewBag.Title = "DashBoard";
-    List<MenuDetail> menuItems = Model;
 }
 
 @section Scripts
@@ -10,18 +12,16 @@
     <link href="~/Content/menu.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
 }
+<link href="~/Content/PagedList.css" rel="stylesheet" />
 
 
 <div style="height: 100% ">
-    <h1 style="font-size:30px;color:aliceblue;text-align: center; padding-top: 0px;">Hello <span style="color:#ff0000">@Session["UserName"]</span> Welcome to The Imperial Spice...</h1>
+    <h1 style="font-size:30px;color:aliceblue;text-align: center; padding-top: 0px;">Hello <span style="color: #00ff82; background: rgb(0, 0, 0,0.5); border-radius: 8px; ">@Session["UserName"]</span> Welcome to The Imperial Spice...</h1>
 
 
     <div class="section-header">
         <div style="display: flex; justify-content: right;">
-            <h2 style="margin:auto  ;font-size: 30px; color: #88ebd3ac; text-align: center; font-weight: 600 ">Our Menu</h2>
-            <a href="@Url.Action("LogOut", "UserLogin")" class="btn btn-primary" style="margin-top:5px;height:fit-content; align-content: center">
-                Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
-            </a>
+            <h2 style="margin: auto; font-size: 35px; color: #88ebd3ac;border-radius:5px; text-align: center; font-weight: 650 ">Our Menu</h2>
         </div>
 
         <br />
@@ -29,7 +29,7 @@
             <a href="@Url.Action("add", "MenuItem")" class="btn btn-primary" style="margin-top:5px;margin-right:30px;height:fit-content; align-content: center">
                 <i class="fa fa-plus fa-1x" style="padding:0px" aria-hidden="true"></i>
             </a>
-            @using (Html.BeginForm("DashBoard", "UserLogin", FormMethod.Post))
+            @using (Html.BeginForm("TypeSearch", "UserLogin", FormMethod.Get))
             {
                 <div style="display:inline-flex">
                     @Html.DropDownList("MealType", (IEnumerable<SelectListItem>)ViewBag.mealTypes, "---ALL---", new { @class = "dropdown", style = "height:28px;padding:2px;margin-top:9px" })
@@ -38,7 +38,7 @@
                     </button>
                 </div>
             }
-            @using (Html.BeginForm("DashBoard", "UserLogin", FormMethod.Get))
+            @using (Html.BeginForm("NameSearch", "UserLogin", FormMethod.Get))
             {
                 <div style="display:inline-flex">
                     @Html.TextBox("searchString", "", new { @class = "", placeholder = "Search here...", style = "margin-top:8px;margin-bottom:8px" })
@@ -54,50 +54,26 @@
 
         <div id="loadpartial">
             @{
-                Html.RenderPartial("DisplayMenuItem", menuItems);
+                Html.RenderPartial("DisplayMenuItem", Model);
             }
+            <div id="Paging">
+                @if (ViewBag.Action == "NameSearch")
+                {
+                    @Html.PagedListPager(Model, page => Url.Action("NameSearch", new { page, searchString = Request.QueryString["searchString"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
+                }
+                else if (ViewBag.Action == "TypeSearch")
+                {
+                    @Html.PagedListPager(Model, page => Url.Action("TypeSearch", new { page, MealType = Request.QueryString["MealType"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
+                }
+                else
+                {
+                    @Html.PagedListPager(Model, page => Url.Action("DashBoard", new { page }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
+                }
+            </div>
         </div>
 
-        @*<div class="product-grid-listing">
-                <div class="row">
-                    @foreach (MenuDetail item in Model)
-                    {
-                        <div class="col-md-4" style="margin-bottom:30px">
-                            <div style="min-height: 331.328px; background: rgb(255, 255, 255,0.5); padding: 15px; border: 1px solid #ccc; border-radius: 16px;">
 
-                                @{
-                                    string imgDataURL = null;
-                                    if (item.Image != null)
-                                    {
-                                        string imreBase64Data = Convert.ToBase64String(item.Image);
-                                        imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
-                                    }
-                                }
-                                <img class="card-img-top" src=@imgDataURL style="min-height: 198px;min-width:fit-content; max-height: 198px; max-width: 280px; border: 1px solid #ccc; border-radius: 16px; " alt="@item.Name image">
-                                <div class="card-body p-2">
-                                    <h5 class="card-title mb-0" style="margin-bottom:0px;font-size:20px;font-family: 'ZCOOL XiaoWei', serif">
-                                        @item.Name
-                                        @{
-                                            string src = item.Veg ? "../Image/veg.png" : "../Image/nonveg.png";
-                                        }
-                                        <img src=@src style="padding-bottom:3px;margin-left:7px;height: 20px" alt="Veg" />
-                                    </h5>
-                                    <div class="d-flex pricing mb-2">
-                                        <div class="price mr-2">
-                                            Price : ₹@item.Price
-                                        </div>
-                                    </div>
 
-                                    <div class="buttons d-flex">
-                                        <a href="@Url.Action("Edit", "MenuItem", new { id = item.ItemID })" class="btn btn-main btn-sm mr-2" style="margin-right:10px"> Edit</a>
-                                        <a href="@Url.Action("Delete","MenuItem",new { id = item.ItemID })" onclick="return confirm('Are you sure want to Delete?')" class="btn btn-main btn-sm"> Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>*@
     </div>
 </div>
 

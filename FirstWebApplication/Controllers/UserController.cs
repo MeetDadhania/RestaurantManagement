@@ -20,12 +20,14 @@ namespace FirstWebApplication.Controllers
         // GET: Student
         public ActionResult Index()
         {
+            SetSession();
             return View();
         }
 
         [HttpPost]
         public async Task<ActionResult> Create(UserRegistration user)
         {
+            SetSession();
             if (ModelState.IsValid)
             {
                 try

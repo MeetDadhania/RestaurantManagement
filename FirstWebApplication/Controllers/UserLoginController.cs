@@ -1,4 +1,5 @@
 ﻿using FirstWebApplication.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,7 +12,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Management;
 using System.Web.Mvc;
+using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.WebPages;
 
 namespace FirstWebApplication.Controllers
 {
@@ -23,6 +26,7 @@ namespace FirstWebApplication.Controllers
         // GET: StudentLogin
         public ActionResult Index()
         {
+            SetSession();
             return View();
         }
 
@@ -37,7 +41,7 @@ namespace FirstWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserRegistration user = restaurantEntities.UserRegistrations.ToList()   .Where(s => s.UserName == userLogin.UserName && DecryptPassword(s.Password) == userLogin.Password).FirstOrDefault();
+                UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.UserName == userLogin.UserName).FirstOrDefault();
                 if (user != null && DecryptPassword(user.Password) == userLogin.Password)
                 {
                     Session["UserID"] = user.UserID.ToString();
@@ -54,37 +58,52 @@ namespace FirstWebApplication.Controllers
             return RedirectToAction("Index");
         }
 
-
-
-        public ActionResult DashBoard(string searchString = "")
+        public ActionResult DashBoard(int? page)
         {
             if (Session["UserName"] == null)
             {
                 return RedirectToAction("Error");
             }
             ViewBag.mealTypes = GetMealTypesList();
-            List<MenuDetail> menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).ToList();
-            TempData["MenuItems"] = menu;
+            ViewBag.Action = "DashBoard";
+            var menu = restaurantEntities.MenuDetails.ToList().ToPagedList(page ?? 1, 6);
             return View(menu);
+        }
+
+        public ActionResult NameSearch(string searchString ,int? page = 1)
+        {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Error");
+            }
+            if(searchString == null || searchString.IsEmpty())
+            {
+                return RedirectToAction("DashBoard");
+            }
+            ViewBag.mealTypes = GetMealTypesList();
+            ViewBag.Action = "NameSearch";
+            var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).ToList().ToPagedList(page ?? 1, 6);
+            return View("DashBoard",menu);
 
         }
 
-        [HttpPost]
-        public ActionResult DashBoard(int? MealType)
+        public ActionResult TypeSearch(int? MealType,int? page)
         {
             if (Session["UserName"] == null)
             {
                 return RedirectToAction("Error");
             }
-            List<MenuDetail> menu = new List<MenuDetail>();
             ViewBag.mealTypes = GetMealTypesList();
+            ViewBag.Action = "TypeSearch";
             if (MealType == null)
             {
-                menu = restaurantEntities.MenuDetails.ToList();
-                return View(menu);
+                return RedirectToAction("DashBoard");
             }
-            menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).ToList();
-            return View(menu);
+            else
+            {
+                var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).ToList().ToPagedList(page ?? 1, 6);
+                return View("DashBoard", menu);
+            }
         }
 
         public ActionResult Error()
