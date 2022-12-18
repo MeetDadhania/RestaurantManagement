@@ -22,27 +22,32 @@ namespace FirstWebApplication
         public int UserID { get; set; }
         [Display(Name = "User Name")]
         [Required(ErrorMessage = "UserName is Required..")]
-        [Remote("doesUserNameExist", "User", ErrorMessage = "User name already exists. Please enter a different user name.")]
-        [StringLength(20, MinimumLength = 5, ErrorMessage = "UserName length must between 5 to 20..")]
+        [Remote("doesUserNameExist", "User", ErrorMessage = "User name already exists..")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "length must between 5 to 20..")]
+        [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not allowed")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is Required..")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "Password length must between 6 to 20..")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "length must between 6 to 20..")]
+        [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not allowed")]
+
         public string Password { get; set; }
 
         [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "Confirm Password is Required..")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "Password length must between 6 to 20..")]
         [Compare("Password",ErrorMessage = "Password Must match...")]
+        [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not Allow")]
         public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "EmailID is Required..")]
         [EmailAddress(ErrorMessage = "Please Enter Valid Email..")]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Display(Name = "Phone Number")]
         [Required(ErrorMessage = "Phone Number is Required..")]
         [DataType(DataType.PhoneNumber)]
+        [RegularExpression(("^[0-9]{10}$"), ErrorMessage = "Please enter valid Mobile No")]
         public long Mobile { get; set; }
         public Nullable<System.DateTime> Date { get; set; } = DateTime.Now;
     }

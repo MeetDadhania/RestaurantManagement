@@ -5,16 +5,36 @@
 
 @section Scripts
 {
+    @Scripts.Render("~/Content/ModalPopup.css");
     <link href="~/Content/menu.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/Content/ModalPopup.css" />
+    <link href="~/Content/sliderCheckBox.css" rel="stylesheet" />
 }
+
+
+<div class="modal fade" id="EditModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title popup-header-title" style="margin:auto" id="exampleModalLongTitle">Edit MenuItem</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span class="popup-header-title" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="product-grid-listing">
     <div class="row">
         @foreach (MenuDetail item in Model)
         {
             <div class="col-md-4" style="margin-bottom:30px">
-                <div style="min-height: 331.328px; background: rgb(255, 255, 255,0.5); padding: 15px; border: 1px solid #ccc; border-radius: 16px;">
+                <div style="min-height: 331.328px; background: rgb(255, 255, 255,0.7); padding: 15px; border: 1px solid #ccc; border-radius: 16px;">
 
                     @{
                         string imgDataURL = null;
@@ -38,14 +58,44 @@
                                 Price : ₹@item.Price
                             </div>
                         </div>
-
+                        @{
+                            int page = Model.PageNumber;
+                            if (Model.FirstItemOnPage == Model.LastItemOnPage && Model.HasPreviousPage)
+                            {
+                                page = Model.PageNumber - 1;
+                            }
+                        }
                         <div class="buttons d-flex">
-                            <a href="@Url.Action("Edit", "MenuItem", new { id = item.ItemID })" class="btn btn-main btn-sm mr-2" style="margin-right:10px"> Edit</a>
-                            <a href="@Url.Action("Delete","MenuItem",new { id = item.ItemID })" onclick="return confirm('Are you sure want to Delete?')" class="btn btn-main btn-sm"> Delete</a>
+                            <a class="btn btn-main btn-sm mr-2 clickAJAX" onclick="getItemDetail(@item.ItemID,@Model.PageNumber)" style="margin-right:10px;"> Edit</a>
+                            <a href="@Url.Action("Delete","MenuItem",new { id = item.ItemID , page = page })" onclick="return confirm('Are you sure want to Delete?')" class="btn btn-main btn-sm"> Delete</a>
                         </div>
                     </div>
                 </div>
             </div>
         }
+
     </div>
 </div>
+
+<script type="text/javascript">
+    function getItemDetail(itemId, page) {
+        
+        $.ajax({
+            type: "Get",
+            url: "/MenuItem/Edit/" + itemId,
+            data: { page : page },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#EditModalCenter").find(".modal-body").html(response);
+                $("#EditModalCenter").modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

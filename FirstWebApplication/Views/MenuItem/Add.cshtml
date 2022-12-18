@@ -30,7 +30,7 @@
 
             @Html.LabelFor(l => l.Price, new { @class = "col-sm-2 col-form-label", style = "color: #ffffff;" })
             <div class="col-sm-10">
-                @Html.TextBoxFor(s => s.Price, new { @class = "", placeholder = "Enter Price ...", style = "margin-bottom : 7px" })
+                @Html.TextBoxFor(s => s.Price, new { @class = "", @type = "number", placeholder = "Enter Price ...", style = "margin-bottom : 7px" })
                 @Html.ValidationMessageFor(s => s.Price, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
             </div>
 

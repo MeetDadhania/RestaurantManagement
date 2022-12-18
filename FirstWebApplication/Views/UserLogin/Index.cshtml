@@ -1,17 +1,33 @@
 ﻿@model FirstWebApplication.Models.UserLogin
 @{
     ViewBag.Title = "Index";
+    var Message = ViewBag.Message;
 }
 
 @section scripts{
-    @Scripts.Render("~/bundles/jqueryval")
+    @Styles.Render("~/Content/LoginStyle.css")
+
+    <link href="~/Content/menu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    @if (ViewBag.message != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                toastr.success('User Created Succesfully', 'Success Message', { timeOut:5000})
+            });
+        </script>
+    }
 }
 
-
-<div style="height: 100% ">
-    <h2 style="color: #000000; background: rgb(255, 255, 255,0.5); padding: 4px; width: fit-content; border: 1px solid #ccc; border-radius: 16px; ">Sign In</h2>
-
-
+<div class="wrapper">
+    <div class="logo">
+        <img src="../Image/TIS.png" alt="">
+    </div>
+    <br />
+    <div class="text-center mt-4 name">
+        The Imperial Spice
+    </div>
+    <br />
     @if (TempData["ErrorMessage"] != null)
     {
         <div class="alert alert-warning" role="alert">
@@ -20,31 +36,68 @@
     }
     @using (Html.BeginForm("Login", "UserLogin", FormMethod.Post))
     {
-
-
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
-        <div class="form-group row">
-
-            @Html.LabelFor(l => l.UserName, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-            <div class="col-sm-10">
-                @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name...", style = "margin-bottom : 7px" })
-                @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-            </div>
-            <br />
-
-            @Html.LabelFor(l => l.Password, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-            <div class="col-sm-10">
-                @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password...", style = "margin-bottom : 7px" })
-                @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-            </div>
-
-            <br />
-
-            <div style="margin-left : 160px">
-                <button type="submit" value="register" class="btn btn-primary">Login</button>
-            </div>
+        @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span style="margin:auto">
+                <i class="fas fa-user" aria-hidden="true"></i>
+            </span>
+            @*<input type="text" name="userName" id="userName" placeholder="Username">*@
+            @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name..." })
         </div>
+
+        @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span class="fas fa-key" style="margin:auto"></span>
+            @*<input type="password" name="password" id="pwd" placeholder="Password">*@
+            @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password..." })
+        </div>
+        <button type="submit" value="register" class="btn mt-3">Login</button>
     }
+    <br />
+    <div class="text-center mt-4 name" style="display:grid">
+        <span style="font-size:20px">or</span>
+        <a href=@Url.Action("Index","User") style="font-size:25px">Sign up</a>
+    </div>
 </div>
+
+
+@*<div style="height: 100% ">
+        <h2 style="color: #000000; background: rgb(255, 255, 255,0.5); padding: 4px; width: fit-content; border: 1px solid #ccc; border-radius: 16px; ">Sign In</h2>
+
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-warning" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+        @using (Html.BeginForm("Login", "UserLogin", FormMethod.Post))
+        {
+
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+            <div class="form-group row">
+
+                @Html.LabelFor(l => l.UserName, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+                <br />
+
+                @Html.LabelFor(l => l.Password, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+
+                <br />
+
+                <div style="margin-left : 160px">
+                    <button type="submit" value="register" class="btn btn-primary">Login</button>
+                </div>
+            </div>
+        }
+    </div>*@

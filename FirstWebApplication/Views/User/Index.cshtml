@@ -4,6 +4,9 @@
 }
 @section scripts{
     @Scripts.Render("~/bundles/jqueryval")
+    @Styles.Render("~/Content/LoginStyle.css")
+    <link href="~/Content/menu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
 }
 
 <head>
@@ -12,53 +15,109 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
 </head>
 
-<div style="height: 100% ">
-    <h2 style="color: #000000; background: rgb(255, 255, 255,0.5);padding:4px;width:fit-content; border: 1px solid #ccc; border-radius: 16px; ">Sign Up</h2>
 
+<div class="wrapper">
+    <div class="logo">
+        <img src="../Image/TIS.png" alt="">
+    </div>
+    <br />
+    <div class="text-center mt-4 name">
+        The Imperial Spice
+    </div>
+    <br />
     @using (Html.BeginForm("Create", "User", FormMethod.Post))
     {
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-<div class="form-group row">
 
-    @Html.LabelFor(l => l.UserName, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-    <div class="col-sm-10">
-        @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name...", style = "margin-bottom : 7px" })
-        @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-    </div>
-    <br />
+        @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span style="margin:auto">
+                <i class="fas fa-user" aria-hidden="true"></i>
+            </span>
+            @*<input type="text" name="userName" id="userName" placeholder="Username">*@
+            @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name..." })
+        </div>
 
-    @Html.LabelFor(l => l.Password, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-    <div class="col-sm-10">
-        @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password...", style = "margin-bottom : 7px" })
-        @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-    </div>
+        @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span class="fas fa-key" style="margin:auto"></span>
+            @*<input type="password" name="password" id="pwd" placeholder="Password">*@
+            @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password..." })
+        </div>
 
-    @Html.LabelFor(l => l.ConfirmPassword, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-    <div class="col-sm-10">
-        @Html.PasswordFor(s => s.ConfirmPassword, new { @class = "", placeholder = "Enter Confirm Password...", style = "margin-bottom : 7px" })
-        @Html.ValidationMessageFor(s => s.ConfirmPassword, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-    </div>
+        @Html.ValidationMessageFor(s => s.ConfirmPassword, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span class="fas fa-key" style="margin:auto"></span>
+            @*<input type="password" name="password" id="pwd" placeholder="Password">*@
+            @Html.PasswordFor(s => s.ConfirmPassword, new { @class = "", placeholder = "Enter Confirm Password..." })
+        </div>
 
-    <br />
+        @Html.ValidationMessageFor(s => s.Email, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span class="fas fa-envelope" style="margin:auto"></span>
+            @*<input type="password" name="password" id="pwd" placeholder="Password">*@
+            @Html.TextBoxFor(s => s.Email, new { @class = "", placeholder = "Enter Email..." })
+        </div>
 
-    @Html.LabelFor(l => l.Email, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-    <div class="col-sm-10">
-        @Html.TextBoxFor(s => s.Email, new { @class = "", placeholder = "Enter Email...", style = "margin-bottom : 7px" })
-        @Html.ValidationMessageFor(s => s.Email, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-    </div>
-    <br />
+        @Html.ValidationMessageFor(s => s.Mobile, "", new { @class = "text-danger" })
+        <div class="form-field d-flex align-items-center" style="display : flex">
+            <span class="fas fa-phone" style="margin:auto"></span>
+            @*<input type="password" name="password" id="pwd" placeholder="Password">*@
+            @Html.TextBoxFor(s => s.Mobile, new { @class = "", placeholder = "Enter Mobile..." })
+        </div>
 
-    @Html.LabelFor(l => l.Mobile, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
-    <div class="col-sm-10">
-        @Html.TextBoxFor(s => s.Mobile, new { @class = "", placeholder = "Enter Mobile...", style = "margin-bottom : 7px" })
-        @Html.ValidationMessageFor(s => s.Mobile, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
-    </div>
-    <br />
 
-    <div style="margin-left : 160px">
-        <button type="submit" value="register" class="btn btn-primary">Submit</button>
-    </div>
-
-</div>
+        <button type="submit" value="register" class="btn mt-3">Register</button>
     }
 </div>
+
+@*<div style="height: 100% ">
+        <h2 style="color: #000000; background: rgb(255, 255, 255,0.5);padding:4px;width:fit-content; border: 1px solid #ccc; border-radius: 16px; ">Sign Up</h2>
+
+        @using (Html.BeginForm("Create", "User", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group row">
+
+                @Html.LabelFor(l => l.UserName, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(s => s.UserName, new { @class = "", placeholder = "Enter User name...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.UserName, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+                <br />
+
+                @Html.LabelFor(l => l.Password, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+
+                @Html.LabelFor(l => l.ConfirmPassword, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.PasswordFor(s => s.ConfirmPassword, new { @class = "", placeholder = "Enter Confirm Password...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.ConfirmPassword, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+
+                <br />
+
+                @Html.LabelFor(l => l.Email, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(s => s.Email, new { @class = "", placeholder = "Enter Email...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.Email, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+                <br />
+
+                @Html.LabelFor(l => l.Mobile, new { @class = "col-sm-2 col-form-label", style = "color: #000000; background: rgb(255, 255, 255,0.5);text-align: center; border: 1px solid #ccc; border-radius: 16px; " })
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(s => s.Mobile, new { @class = "", placeholder = "Enter Mobile...", style = "margin-bottom : 7px" })
+                    @Html.ValidationMessageFor(s => s.Mobile, "", new { @class = "text-danger", style = "color: #ff0000;    background: rgb(255, 255, 255,0.5)" })
+                </div>
+                <br />
+
+                <div style="margin-left : 160px">
+                    <button type="submit" value="register" class="btn btn-primary">Submit</button>
+                </div>
+
+            </div>
+        }
+    </div>*@

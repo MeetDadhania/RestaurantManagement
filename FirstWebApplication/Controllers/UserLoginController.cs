@@ -27,6 +27,10 @@ namespace FirstWebApplication.Controllers
         public ActionResult Index()
         {
             SetSession();
+            if (TempData["ReisterMessage"] != null)
+            {
+                ViewBag.Message = "Success";
+            }
             return View();
         }
 
@@ -66,28 +70,39 @@ namespace FirstWebApplication.Controllers
             }
             ViewBag.mealTypes = GetMealTypesList();
             ViewBag.Action = "DashBoard";
-            var menu = restaurantEntities.MenuDetails.ToList().ToPagedList(page ?? 1, 6);
+            if (TempData["DeleteMessage"] != null)
+            {
+                ViewBag.deleteMessage = TempData["DeleteMessage"];
+            }else if (TempData["addMessage"] != null)
+            {
+                ViewBag.addMessage = TempData["addMessage"];
+            }else if (TempData["editMessage"]!= null)
+            {
+                ViewBag.editMessage = TempData["editMessage"];
+            }
+            var menu = restaurantEntities.MenuDetails.OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+            menu.Append(new MenuDetail());
             return View(menu);
         }
 
-        public ActionResult NameSearch(string searchString ,int? page = 1)
+        public ActionResult NameSearch(string searchString, int? page = 1)
         {
             if (Session["UserName"] == null)
             {
                 return RedirectToAction("Error");
             }
-            if(searchString == null || searchString.IsEmpty())
+            if (searchString == null || searchString.IsEmpty())
             {
                 return RedirectToAction("DashBoard");
             }
             ViewBag.mealTypes = GetMealTypesList();
             ViewBag.Action = "NameSearch";
-            var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).ToList().ToPagedList(page ?? 1, 6);
-            return View("DashBoard",menu);
+            var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+            return View("DashBoard", menu);
 
         }
 
-        public ActionResult TypeSearch(int? MealType,int? page)
+        public ActionResult TypeSearch(int? MealType, int? page)
         {
             if (Session["UserName"] == null)
             {
@@ -101,7 +116,7 @@ namespace FirstWebApplication.Controllers
             }
             else
             {
-                var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).ToList().ToPagedList(page ?? 1, 6);
+                var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
                 return View("DashBoard", menu);
             }
         }

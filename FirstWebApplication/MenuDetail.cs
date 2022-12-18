@@ -15,7 +15,8 @@ namespace FirstWebApplication
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class MenuDetail
     {
         public int ItemID { get; set; }
@@ -31,6 +32,7 @@ namespace FirstWebApplication
         public int TypeID { get; set; }
 
         [Required(ErrorMessage = "Price is Required..")]
+        [Range(1, int.MaxValue, ErrorMessage = "Price must be positive")]
         public int Price { get; set; }
         public bool Veg { get; set; }
         public System.DateTime CreatedOn { get; set; }

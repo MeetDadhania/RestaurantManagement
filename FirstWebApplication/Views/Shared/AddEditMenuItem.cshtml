@@ -1,0 +1,161 @@
+﻿@model FirstWebApplication.MenuDetail
+
+@{
+    Layout = null;
+}
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
+
+
+@if (ViewBag.ActionMethod == "Add")
+{
+    using (Html.BeginForm("Add", "MenuItem", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+<div class="form-group row">
+    <div class="col-sm-6 col-form-label"></div>
+    <div class="col-sm-6" style="display:flex">
+        @Html.ValidationMessageFor(s => s.Name, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(l => l.Name, new { @class = "col-sm-6 col-form-label" })
+    <div class="col-sm-6" style="display:flex">
+        @Html.TextBoxFor(s => s.Name, new { @class = "", placeholder = "Enter Item name...", style = "margin-bottom : 7px" })
+    </div>
+
+    <br />
+
+    <div class="col-sm-6 col-form-label"></div>
+    <div class="col-sm-6" style="display:flex">
+        @Html.ValidationMessageFor(s => s.Price, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(l => l.Price, new { @class = "col-sm-6 col-form-label" })
+    <div class="col-sm-6" style="display:flex">
+        @Html.TextBoxFor(s => s.Price, new { @class = "", @type = "number", placeholder = "Enter Price ...", style = "margin-bottom : 7px" })
+    </div>
+
+    <br />
+
+    <div class="col-sm-6 col-form-label"></div>
+    <div class="col-sm-6" style="display:flex">
+        @Html.ValidationMessageFor(s => s.TypeID, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(l => l.TypeID, new { @class = "col-sm-6 col-form-label" })
+    <div class="col-sm-6" style="display:flex">
+        @Html.DropDownListFor(s => s.TypeID, new SelectList(ViewBag.mealTypes, "Value", "Text"), "---Select Type---", new { @class = "dropdown", style = "margin-bottom : 7px;height: 23px;width: 179px;" })
+    </div>
+
+    <br />
+
+    @Html.LabelFor(l => l.Image, new { @class = "col-sm-6 col-form-label" })
+    <div class="col-sm-6" style="display:flex">
+        <input id="ImageData" name="ImageData" type="file" accept="image/*" style="margin-bottom : 7px;color: #000000; background: rgb(255, 255, 255,0.5);" />
+        @Html.ValidationMessageFor(s => s.Image, "", new { @class = "text-danger" })
+    </div>
+
+    <br />
+
+    @Html.LabelFor(l => l.Veg, new { @class = "col-sm-6 col-form-label" })
+    <div class="col-sm-6" style="display:flex">
+        <label class="switch">
+            <input checked=@(Model.Veg != false) data-val="true" data-val-required="The Veg field is required." id="Veg" name="Veg" type="checkbox" value="true">
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <hr />
+
+    <div class="col-sm-12 modal-footer" style="width: 598px; margin-left: 5px; margin-top: 7px; border-top: 1px double #dee2e6">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" value="register" class="btn btn-primary">Submit</button>
+    </div>
+
+</div>
+
+    }
+}
+
+else
+{
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+    using (Html.BeginForm("Edit", "MenuItem", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(s => s.ItemID);
+        @Html.HiddenFor(s => s.Image);
+
+        <input type="hidden" id="pageNum" name="pageNum" value="@ViewBag.page">
+
+        <div class="form-group row">
+
+            <div class="col-sm-6 col-form-label"></div>
+            <div class="col-sm-6" style="display:flex">
+                @Html.ValidationMessageFor(s => s.Name, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(l => l.Name, new { @class = "col-sm-6 col-form-label" })
+            <div class="col-sm-6" style="display:flex">
+                @Html.TextBoxFor(s => s.Name, new { @class = "", placeholder = "Enter Item name...", style = "margin-bottom : 7px" })
+            </div>
+            <br />
+
+            <div class="col-sm-6 col-form-label"></div>
+            <div class="col-sm-6" style="display:flex">
+                @Html.ValidationMessageFor(s => s.Price, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(l => l.Price, new { @class = "col-sm-6 col-form-label" })
+            <div class="col-sm-6" style="display:flex">
+                @Html.TextBoxFor(s => s.Price, new { @class = "", @type = "number", placeholder = "Enter Price ...", style = "margin-bottom : 7px" })
+            </div>
+
+            <br />
+
+            <div class="col-sm-6 col-form-label"></div>
+            <div class="col-sm-6" style="display:flex">
+                @Html.ValidationMessageFor(s => s.TypeID, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(l => l.TypeID, new { @class = "col-sm-6 col-form-label" })
+            <div class="col-sm-6" style="display:flex">
+                @Html.DropDownListFor(s => s.TypeID, new SelectList(ViewBag.mealTypes, "Value", "Text"), "---Select Type---", new { @class = "dropdown", style = "margin-bottom : 7px;height: 23px;width: 179px;" })
+            </div>
+
+            <br />
+
+            @Html.LabelFor(l => l.Image, new { @class = "col-sm-6 col-form-label" })
+            <div class="col-sm-6" style="display:flex">
+                <input id="ImageData" name="ImageData" type="file" accept="image/*" style="margin-bottom : 7px;color: #000000; background: rgb(255, 255, 255,0.5);" />
+            </div>
+
+            <br />
+
+            @Html.LabelFor(l => l.Veg, new { @class = "col-sm-6 col-form-label" })
+            <div class="col-sm-6" style="display:flex">
+                <label class="switch">
+                    <input checked=@(Model.Veg != false) data-val="true" data-val-required="The Veg field is required." id="Veg" name="Veg" type="checkbox" value="true">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <hr />
+
+            <div class="col-sm-12 modal-footer" style="width: 598px; margin-left: 5px; margin-top: 7px; border-top: 1px double #dee2e6">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" value="register" class="btn btn-primary">Submit</button>
+            </div>
+
+        </div>
+    }
+}

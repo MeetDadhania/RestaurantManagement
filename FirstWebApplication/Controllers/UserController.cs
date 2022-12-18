@@ -34,15 +34,17 @@ namespace FirstWebApplication.Controllers
                 {
                     user.Password = EncryptPassword(user.Password);
                     user.ConfirmPassword = EncryptPassword(user.ConfirmPassword);
-                    restaurantEntities.UserRegistrations.Add(user);
-                    await restaurantEntities.SaveChangesAsync();
-                    return View(user);
+                    //restaurantEntities.UserRegistrations.Add(user);
+                    //await restaurantEntities.SaveChangesAsync();
+                    TempData["ReisterMessage"] = "Success";
+                    return RedirectToAction("Index","UserLogin");
                 }
                 catch (DbEntityValidationException dbEx)
                 {
                     throw dbEx;
                 }
             }
+            
             return RedirectToAction("Index");
         }
 

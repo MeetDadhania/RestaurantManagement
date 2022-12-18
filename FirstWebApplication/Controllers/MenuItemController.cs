@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace FirstWebApplication.Controllers
 {
@@ -46,12 +47,15 @@ namespace FirstWebApplication.Controllers
                 menuDetail.CreatedOn = DateTime.Now;
                 restaurantEntities.MenuDetails.Add(menuDetail);
                 await restaurantEntities.SaveChangesAsync();
+                TempData["addMessage"] = "Added";
                 return RedirectToAction("DashBoard", "UserLogin");
             }
-            return View();
+            ViewBag.mealTypes = GetMealTypesList();
+            TempData["addMessage"] = "Error";
+            return RedirectToAction("DashBoard", "UserLogin");
         }
 
-        public ActionResult Edit(int Id)
+        public ActionResult Edit(int Id,int? page)
         {
             if (!CheckLogin())
             {
@@ -59,11 +63,13 @@ namespace FirstWebApplication.Controllers
             }
             MenuDetail item = restaurantEntities.MenuDetails.Where(i => i.ItemID.Equals(Id)).FirstOrDefault();
             ViewBag.mealTypes = GetMealTypesList();
-            return View(item);
+            ViewBag.ActionMethod = "Edit";
+            ViewBag.page = page;
+            return PartialView("AddEditMenuItem",item);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(MenuDetail item)
+        public async Task<ActionResult> Edit(MenuDetail item,int pageNum)
         {
             if (!CheckLogin())
             {
@@ -87,12 +93,14 @@ namespace FirstWebApplication.Controllers
                 menuDetail.ModifiedBy = Session["UserName"].ToString();
                 menuDetail.ModifiedOn = DateTime.Now;
                 await restaurantEntities.SaveChangesAsync();
-                return RedirectToAction("DashBoard", "UserLogin");
+                TempData["editMessage"] = "Edited";
+                return RedirectToAction("DashBoard", "UserLogin", new { page = pageNum });
             }
-            return View(item);
+            TempData["editMessage"] = "Error";
+            return RedirectToAction("DashBoard", "UserLogin");
         }
 
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult> Delete(int Id,int? page)
         {
             if (!CheckLogin())
             {
@@ -101,7 +109,8 @@ namespace FirstWebApplication.Controllers
             MenuDetail removeItem = restaurantEntities.MenuDetails.Find(Id);
             restaurantEntities.MenuDetails.Remove(removeItem);
             await restaurantEntities.SaveChangesAsync();
-            return RedirectToAction("DashBoard", "UserLogin");
+            TempData["DeleteMessage"] = "Deleted";
+            return RedirectToAction("DashBoard", "UserLogin",new { page = page});
         }
 
         private SelectListItem[] GetMealTypesList()
