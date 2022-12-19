@@ -16,12 +16,14 @@ namespace FirstWebApplication
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Web.Mvc;
 
     public partial class MenuDetail
     {
         public int ItemID { get; set; }
         [Display(Name = "Item Name")]
         [Required(ErrorMessage = "Item Name is Required..")]
+        //[Remote("doesItemNameExist", "MenuItem", ErrorMessage = "Item already exists..")]
         [StringLength(45, MinimumLength = 5, ErrorMessage = "Item Name length must between 5 to 45..")]
         public string Name { get; set; }
 

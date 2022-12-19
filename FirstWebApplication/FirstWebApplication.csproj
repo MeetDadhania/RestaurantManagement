@@ -337,12 +337,10 @@
       <DependentUpon>StudentModel.edmx</DependentUpon>
     </Content>
     <Content Include="Views\UserLogin\DashBoard.cshtml" />
-    <Content Include="Views\MenuItem\Edit.cshtml" />
     <Content Include="Views\UserLogin\Error.cshtml" />
     <Content Include="Views\UserLogin\Index.cshtml" />
     <Content Include="Views\User\Create.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
-    <Content Include="Views\MenuItem\Add.cshtml" />
     <Content Include="Views\MenuItem\Error.cshtml" />
     <Content Include="Views\Shared\DisplayMenuItem.cshtml" />
     <Content Include="Views\Shared\AddEditMenuItem.cshtml" />

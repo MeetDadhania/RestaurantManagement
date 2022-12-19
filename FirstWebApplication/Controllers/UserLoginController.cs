@@ -73,10 +73,12 @@ namespace FirstWebApplication.Controllers
             if (TempData["DeleteMessage"] != null)
             {
                 ViewBag.deleteMessage = TempData["DeleteMessage"];
-            }else if (TempData["addMessage"] != null)
+            }
+            else if (TempData["addMessage"] != null)
             {
                 ViewBag.addMessage = TempData["addMessage"];
-            }else if (TempData["editMessage"]!= null)
+            }
+            else if (TempData["editMessage"] != null)
             {
                 ViewBag.editMessage = TempData["editMessage"];
             }
@@ -85,39 +87,50 @@ namespace FirstWebApplication.Controllers
             return View(menu);
         }
 
-        public ActionResult NameSearch(string searchString, int? page = 1)
+        //public ActionResult NameSearch(string searchString, int? page = 1)
+        //{
+        //    if (Session["UserName"] == null)
+        //    {
+        //        return RedirectToAction("Error");
+        //    }
+        //    if (searchString == null || searchString.IsEmpty())
+        //    {
+        //        return RedirectToAction("DashBoard");
+        //    }
+        //    ViewBag.mealTypes = GetMealTypesList();
+        //    ViewBag.Action = "NameSearch";
+        //    var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+        //    return View("DashBoard", menu);
+
+        //}
+
+        public ActionResult SearchFunction(int? MealType, string searchString, int? page)
         {
             if (Session["UserName"] == null)
             {
                 return RedirectToAction("Error");
             }
-            if (searchString == null || searchString.IsEmpty())
+            ViewBag.mealTypes = GetMealTypesList();
+            ViewBag.Action = "SearchFunction";
+            if (MealType == null && (searchString == null || searchString.IsEmpty()) )
             {
                 return RedirectToAction("DashBoard");
             }
-            ViewBag.mealTypes = GetMealTypesList();
-            ViewBag.Action = "NameSearch";
-            var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
-            return View("DashBoard", menu);
-
-        }
-
-        public ActionResult TypeSearch(int? MealType, int? page)
-        {
-            if (Session["UserName"] == null)
+            else if (MealType == null)
             {
-                return RedirectToAction("Error");
+                var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+                return View("DashBoard", menu);
             }
-            ViewBag.mealTypes = GetMealTypesList();
-            ViewBag.Action = "TypeSearch";
-            if (MealType == null)
-            {
-                return RedirectToAction("DashBoard");
-            }
-            else
+            else if (searchString == null || searchString.IsEmpty())
             {
                 var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
                 return View("DashBoard", menu);
+            }
+            else
+            {
+                var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+                return View("DashBoard", menu);
+
             }
         }
 

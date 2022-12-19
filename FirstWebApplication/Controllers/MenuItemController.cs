@@ -19,16 +19,6 @@ namespace FirstWebApplication.Controllers
             return View();
         }
 
-        public ActionResult Add()
-        {
-            if (!CheckLogin())
-            {
-                return RedirectToAction("Error");
-            }
-            ViewBag.mealTypes = GetMealTypesList();
-            return View();
-        }
-
         [HttpPost]
         public async Task<ActionResult> Add(MenuDetail menuDetail)
         {
@@ -144,6 +134,11 @@ namespace FirstWebApplication.Controllers
             BinaryReader reader = new BinaryReader(image.InputStream);
             imageBytes = reader.ReadBytes((int)image.ContentLength);
             return imageBytes;
+        }
+
+        public JsonResult doesItemNameExist(string Name)
+        {
+            return Json(!restaurantEntities.MenuDetails.Any(x => x.Name == Name), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Error()

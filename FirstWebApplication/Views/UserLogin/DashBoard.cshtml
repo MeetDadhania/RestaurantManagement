@@ -64,8 +64,14 @@
     }
     <script type="text/javascript">
         $('#AddModalCenter').on('hidden.bs.modal', function () {
-            $(this).find('form').trigger('reset');
+            var theForm = $(this).find('form');
+
+            theForm.each(function () {
+                theForm.find(".field-validation-error").empty();
+                theForm.trigger('reset.unobtrusiveValidation');
+            });
         })
+
     </script>
 }
 
@@ -79,13 +85,12 @@
 
         <br />
         <div style="display: flex; justify-content: flex-end;height:fit-content">
-            @*<a href="@Url.Action("add", "MenuItem")" class="btn btn-primary" style="margin-top:5px;margin-right:30px;height:fit-content; align-content: center">
-                    <i class="fa fa-plus fa-1x" style="padding:0px" aria-hidden="true"></i>
-                </a>*@
+            <div style="display:contents">
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddModalCenter" style="margin-top:5px;margin-right:30px;height:fit-content; align-content: center">
-                <i class="fa fa-plus fa-1x" style="padding:0px" aria-hidden="true"></i>
-            </button>
+                <button type="button" class="btn" data-toggle="modal" data-target="#AddModalCenter" style="color: #fff;font-size: initial; margin-right: auto; height: fit-content; align-content: center; background-color: #563D7C ">
+                    Add <i class="fa fa-add" style="padding:0px" aria-hidden="true"></i>
+                </button>
+            </div>
 
             <div class="modal fade" id="AddModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -107,23 +112,21 @@
             </div>
 
 
-            @using (Html.BeginForm("TypeSearch", "UserLogin", FormMethod.Get))
+            @using (Html.BeginForm("SearchFunction", "UserLogin", FormMethod.Get))
             {
-                <div style="display:inline-flex">
-                    @Html.DropDownList("MealType", (IEnumerable<SelectListItem>)ViewBag.mealTypes, "---ALL---", new { @class = "dropdown", style = "height:28px;padding:2px;margin-top:9px" })
-                    <button type="submit" value="register" class="btn btn-primary" style="height:22px;margin:5px;height:fit-content; align-content: center">
-                        <i class="fa fa-search fa-1x" style="padding:0px" aria-hidden="true"></i>
-                    </button>
+                <div style="display: inline-flex;flex-direction: column; justify-content: space-evenly; align-items: flex-end;">
+                    <div>
+                        @Html.DropDownList("MealType", (IEnumerable<SelectListItem>)ViewBag.mealTypes, "---ALL---", new { @class = "dropdown", style = "height:26px;padding:2px;margin-top:8px" })
+                        @Html.TextBox("searchString", "", new { @class = "", placeholder = "Search here...", style = "margin-top:8px;margin-bottom:8px" })
+                    </div>
+                    <div>
+                        <button type="submit" value="register" class="btn btn-primary" style="height:22px;height:fit-content; align-content: center">
+                            Search <i class="fa fa-search fa-1x" style="padding:0px" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
-            }
-            @using (Html.BeginForm("NameSearch", "UserLogin", FormMethod.Get))
-            {
-                <div style="display:inline-flex">
-                    @Html.TextBox("searchString", "", new { @class = "", placeholder = "Search here...", style = "margin-top:8px;margin-bottom:8px" })
-                    <button type="submit" value="register" class="btn btn-primary" style="margin:5px;height:fit-content; align-content: center">
-                        <i class="fa fa-search fa-1x" style="padding:0px" aria-hidden="true"></i>
-                    </button>
-                </div>
+                <br />
+
             }
 
         </div>
@@ -135,13 +138,9 @@
                 Html.RenderPartial("DisplayMenuItem", Model);
             }
             <div id="Paging" class="col-sm-12">
-                @if (ViewBag.Action == "NameSearch")
+                @if (ViewBag.Action == "SearchFunction")
                 {
-                    @Html.PagedListPager(Model, page => Url.Action("NameSearch", new { page, searchString = Request.QueryString["searchString"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
-                }
-                else if (ViewBag.Action == "TypeSearch")
-                {
-                    @Html.PagedListPager(Model, page => Url.Action("TypeSearch", new { page, MealType = Request.QueryString["MealType"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
+                    @Html.PagedListPager(Model, page => Url.Action("TypeSearch", new { page, MealType = Request.QueryString["MealType"], searchString = Request.QueryString["searchString"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
                 }
                 else
                 {
