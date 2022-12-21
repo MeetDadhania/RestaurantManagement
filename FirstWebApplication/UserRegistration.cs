@@ -20,6 +20,7 @@ namespace FirstWebApplication
     public partial class UserRegistration
     {
         public int UserID { get; set; }
+
         [Display(Name = "User Name")]
         [Required(ErrorMessage = "UserName is Required..")]
         [Remote("doesUserNameExist", "User", ErrorMessage = "User name already exists..")]
@@ -27,21 +28,20 @@ namespace FirstWebApplication
         [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not allowed")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Password is Required..")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "length must between 6 to 20..")]
-        [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not allowed")]
-
-        public string Password { get; set; }
-
         [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "Confirm Password is Required..")]
-        [Compare("Password",ErrorMessage = "Password Must match...")]
+        [Compare("Password", ErrorMessage = "Password Must match...")]
         [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not Allow")]
         public string ConfirmPassword { get; set; }
 
-        [Required(ErrorMessage = "EmailID is Required..")]
+        [Required(ErrorMessage = "Password is Required..")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "length must between 6 to 20..")]
+        [RegularExpression(("[^ ]+$"), ErrorMessage = "Space is not allowed")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Email is Required..")]
         [EmailAddress(ErrorMessage = "Please Enter Valid Email..")]
-        [RegularExpression(("^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$"),ErrorMessage = "Enter valid EmailID")]
+        [RegularExpression(("^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$"), ErrorMessage = "Enter valid Email..")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
@@ -51,5 +51,7 @@ namespace FirstWebApplication
         [RegularExpression(("^[0-9]{10}$"), ErrorMessage = "Please enter valid Mobile No")]
         public long Mobile { get; set; }
         public Nullable<System.DateTime> Date { get; set; } = DateTime.Now;
+        public System.Guid ActivationCode { get; set; }
+        public bool IsVerified { get; set; }
     }
 }

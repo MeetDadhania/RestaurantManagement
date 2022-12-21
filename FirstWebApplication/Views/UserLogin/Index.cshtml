@@ -9,14 +9,34 @@
 
     <link href="~/Content/menu.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
-    @if (ViewBag.message != null)
+    <link rel="stylesheet" href="~/Content/ModalPopup.css" />
+    @if (ViewBag.ReisterMessage != null)
     {
         <script type="text/javascript">
             $(document).ready(function () {
-                toastr.success('User Created Succesfully', 'Success Message', { timeOut:5000})
+                toastr.success('Account is activated', 'Success Message', { timeOut: 5000 })
             });
         </script>
     }
+    @if (ViewBag.PasswordReset != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                toastr.success('Password reset successfully', 'Success Message', { timeOut: 5000 })
+            });
+        </script>
+    }
+    <script type="text/javascript">
+        $('#ForgotPassword').on('hidden.bs.modal', function () {
+            var theForm = $(this).find('form');
+
+            theForm.each(function () {
+                theForm.find(".field-validation-error").empty();
+                theForm.trigger('reset.unobtrusiveValidation');
+            });
+        })
+
+    </script>
 }
 
 <div class="wrapper">
@@ -30,8 +50,14 @@
     <br />
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-warning" role="alert">
+        <div class="alert alert-danger" role="alert">
             @TempData["ErrorMessage"]
+        </div>
+    }
+    else if (ViewBag.ForgotPassword != null)
+    {
+        <div class="alert alert-success" role="alert">
+            You can reset the Password with link send to your Email..
         </div>
     }
     @using (Html.BeginForm("Login", "UserLogin", FormMethod.Post))
@@ -51,12 +77,32 @@
             @*<input type="password" name="password" id="pwd" placeholder="Password">*@
             @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password..." })
         </div>
+
+        <a href="#" data-toggle="modal" data-target="#ForgotPassword" style="font-size:15px">Forgot password?</a>
+
         <button type="submit" value="register" class="btn mt-3">Login</button>
     }
-    <br />
     <div class="text-center mt-4 name" style="display:grid">
         <span style="font-size:20px">or</span>
         <a href=@Url.Action("Index","User") style="font-size:25px">Sign up</a>
+    </div>
+</div>
+
+<div class="modal fade" id="ForgotPassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title popup-header-title" style="margin:auto" id="exampleModalLongTitle">Forgot Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span class="popup-header-title" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @{
+                    Html.RenderPartial("ForgotPassword", new FirstWebApplication.Models.ForgotPassword());
+                }
+            </div>
+        </div>
     </div>
 </div>
 

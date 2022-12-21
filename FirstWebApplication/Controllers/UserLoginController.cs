@@ -1,4 +1,5 @@
 ﻿using FirstWebApplication.Models;
+using NLog;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -20,135 +21,200 @@ namespace FirstWebApplication.Controllers
 {
     public class UserLoginController : Controller
     {
+        #region private readonly variables
         private readonly RestaurantEntities restaurantEntities = new RestaurantEntities();
-
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        #endregion
 
         // GET: StudentLogin
+
+        #region index method return login view
         public ActionResult Index()
         {
             SetSession();
-            if (TempData["ReisterMessage"] != null)
-            {
-                ViewBag.Message = "Success";
-            }
+            ViewBag.ReisterMessage = TempData["ReisterMessage"];
+            ViewBag.ForgotPassword = TempData["ForgotPassword"];
+            ViewBag.PasswordReset = TempData["PasswordReset"];
+
             return View();
         }
+        #endregion
 
+        #region logout method
         public ActionResult LogOut()
         {
             SetSession();
             return RedirectToAction("Index");
         }
+        #endregion
 
+        #region User login method
         [HttpPost]
         public ActionResult Login(UserLogin userLogin)
         {
-            if (ModelState.IsValid)
+            try
             {
-                UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.UserName == userLogin.UserName).FirstOrDefault();
-                if (user != null && DecryptPassword(user.Password) == userLogin.Password)
+                //check model state is valid
+                if (ModelState.IsValid)
                 {
-                    Session["UserID"] = user.UserID.ToString();
-                    Session["UserName"] = user.UserName;
+                    //get user details from DB
+                    UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.UserName == userLogin.UserName).FirstOrDefault();
 
-                    return RedirectToAction("DashBoard");
+                    //check user exist, password match, user is verified
+                    if (user != null && DecryptPassword(user.Password) == userLogin.Password && user.IsVerified == true)
+                    {
+                        //set the session 
+                        Session["UserID"] = user.UserID.ToString();
+                        Session["UserName"] = user.UserName;
+
+                        //redirect to dashboard
+                        return RedirectToAction("DashBoard");
+                    }
+                    //if user is not verified
+                    else if (user.IsVerified == false)
+                    {
+                        //redirect to login page with message
+                        TempData["ErrorMessage"] = "Account is not Verified..";
+                        return RedirectToAction("Index");
+                    }
+                    //if user doesn't exist 
+                    else
+                    {
+                        //redirect to login page with message
+                        TempData["ErrorMessage"] = "UserName or Password is incorrect";
+                        return RedirectToAction("Index");
+                    }
                 }
-                else
-                {
-                    TempData["ErrorMessage"] = "UserName or Password is incorrect";
-                    return RedirectToAction("Index");
-                }
+                //if model is invalid redirect to login page
+                return RedirectToAction("Index");
             }
-            return RedirectToAction("Index");
-        }
+            catch (Exception ex)
+            {
+                //log the error message in log file
+                logger.Error(ex, "UserLoginController Login[Post] Action");
 
+                //return the error view with message
+                ViewBag.errorMessage = "Something went wrong please try again..";
+                return View("Error");
+            }
+        }
+        #endregion
+
+        #region DashBoard method
         public ActionResult DashBoard(int? page)
         {
+            //check user login or not
             if (Session["UserName"] == null)
             {
-                return RedirectToAction("Error");
+                //if user not login redirect to error page with message
+                ViewBag.errorMessage = "Please Login to continue...";
+                return View("Error");
             }
-            ViewBag.mealTypes = GetMealTypesList();
-            ViewBag.Action = "DashBoard";
-            if (TempData["DeleteMessage"] != null)
+            try
             {
+                //get meal type from database 
+                ViewBag.mealTypes = GetMealTypesList();
+                ViewBag.Action = "DashBoard";
+
+                //add messages to viewbag
+
                 ViewBag.deleteMessage = TempData["DeleteMessage"];
-            }
-            else if (TempData["addMessage"] != null)
-            {
+
                 ViewBag.addMessage = TempData["addMessage"];
-            }
-            else if (TempData["editMessage"] != null)
-            {
+
                 ViewBag.editMessage = TempData["editMessage"];
+
+
+                //get menu details from DB and return dashboard view
+                var menu = restaurantEntities.MenuDetails.OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+                return View(menu);
             }
-            var menu = restaurantEntities.MenuDetails.OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
-            menu.Append(new MenuDetail());
-            return View(menu);
+            catch (Exception ex)
+            {
+                //log the error message in log file
+                logger.Error(ex, "UserLoginController DashBoard Action");
+
+                //return the error view with message
+                ViewBag.errorMessage = "Something went wrong please try again..";
+                return View("Error");
+            }
         }
+        #endregion
 
-        //public ActionResult NameSearch(string searchString, int? page = 1)
-        //{
-        //    if (Session["UserName"] == null)
-        //    {
-        //        return RedirectToAction("Error");
-        //    }
-        //    if (searchString == null || searchString.IsEmpty())
-        //    {
-        //        return RedirectToAction("DashBoard");
-        //    }
-        //    ViewBag.mealTypes = GetMealTypesList();
-        //    ViewBag.Action = "NameSearch";
-        //    var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
-        //    return View("DashBoard", menu);
-
-        //}
-
+        #region search method 
         public ActionResult SearchFunction(int? MealType, string searchString, int? page)
         {
+            //check user login or not
             if (Session["UserName"] == null)
             {
-                return RedirectToAction("Error");
+                ViewBag.errorMessage = "Please Login to continue...";
+                return View("Error");
             }
-            ViewBag.mealTypes = GetMealTypesList();
-            ViewBag.Action = "SearchFunction";
-            if (MealType == null && (searchString == null || searchString.IsEmpty()) )
+            try
             {
-                return RedirectToAction("DashBoard");
-            }
-            else if (MealType == null)
-            {
-                var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
-                return View("DashBoard", menu);
-            }
-            else if (searchString == null || searchString.IsEmpty())
-            {
-                var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
-                return View("DashBoard", menu);
-            }
-            else
-            {
-                var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
-                return View("DashBoard", menu);
+                //get meal type from DB
+                ViewBag.mealTypes = GetMealTypesList();
+                ViewBag.Action = "SearchFunction";
 
+                //return menu details list based on search input and return dashboard view
+
+                //without search anything
+                if (MealType == null && (searchString == null || searchString.IsEmpty()))
+                {
+                    return RedirectToAction("DashBoard");
+                }
+                //search by name
+                else if (MealType == null)
+                {
+                    var menu = restaurantEntities.MenuDetails.Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+                    return View("DashBoard", menu);
+                }
+                //search by meal type
+                else if (searchString == null || searchString.IsEmpty())
+                {
+                    var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+                    return View("DashBoard", menu);
+                }
+                //search by meal type and name both
+                else
+                {
+                    var menu = restaurantEntities.MenuDetails.Where(s => s.TypeID == MealType).Where(s => s.Name.Contains(searchString)).OrderByDescending(item => item.CreatedOn).ToList().ToPagedList(page ?? 1, 6);
+                    return View("DashBoard", menu);
+                }
+            }
+            catch (Exception ex)
+            {
+                //log the error message in log file
+                logger.Error(ex, "UserLoginController SearchFunction Action");
+
+                //return the error view with message
+                ViewBag.errorMessage = "Something went wrong please try again..";
+                return View("Error");
             }
         }
+        #endregion
 
+        #region error page method
         public ActionResult Error()
         {
             return View();
         }
+        #endregion
 
+        #region clear user session
         private void SetSession()
         {
             Session["UserName"] = null;
             Session["UserID"] = null;
         }
+        #endregion
 
+        #region select list of meal type from DB
         private SelectListItem[] GetMealTypesList()
         {
             SelectListItem[] mealTypes = null;
 
+            //get meal type from DB
             var items = restaurantEntities.MealTypes.Select(a => new SelectListItem()
             {
                 Text = a.MealType1,
@@ -169,7 +235,9 @@ namespace FirstWebApplication.Controllers
                 })
              .ToArray();
         }
+        #endregion
 
+        #region password decryption algo
         private string DecryptPassword(string password)
         {
             StringBuilder encryptedPassword = new StringBuilder(password);
@@ -186,5 +254,6 @@ namespace FirstWebApplication.Controllers
             }
             return encryptedPassword.ToString();
         }
+        #endregion
     }
 }

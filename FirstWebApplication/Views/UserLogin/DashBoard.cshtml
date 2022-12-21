@@ -20,7 +20,8 @@
     {
         <script type="text/javascript">
             $(document).ready(function () {
-                toastr.info('Item Deleted Succesfully', 'Delete Message', { timeOut: 5000 })
+                toastr.error('Item Deleted Succesfully', 'Delete Message', { timeOut: 5000 })
+                
             });
         </script>
     }
@@ -92,7 +93,7 @@
                 </button>
             </div>
 
-            <div class="modal fade" id="AddModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="AddModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style=" background: rgb(255, 255, 255,0.3)" >
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -120,7 +121,7 @@
                         @Html.TextBox("searchString", "", new { @class = "", placeholder = "Search here...", style = "margin-top:8px;margin-bottom:8px" })
                     </div>
                     <div>
-                        <button type="submit" value="register" class="btn btn-primary" style="height:22px;height:fit-content; align-content: center">
+                        <button type="submit" value="register" class="btn" style="color: #fff;background-color: #563D7C; height: 22px; height: fit-content; align-content: center ">
                             Search <i class="fa fa-search fa-1x" style="padding:0px" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -140,7 +141,7 @@
             <div id="Paging" class="col-sm-12">
                 @if (ViewBag.Action == "SearchFunction")
                 {
-                    @Html.PagedListPager(Model, page => Url.Action("TypeSearch", new { page, MealType = Request.QueryString["MealType"], searchString = Request.QueryString["searchString"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
+                    @Html.PagedListPager(Model, page => Url.Action("SearchFunction", new { page, MealType = Request.QueryString["MealType"], searchString = Request.QueryString["searchString"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
                 }
                 else
                 {

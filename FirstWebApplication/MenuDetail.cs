@@ -6,10 +6,6 @@
 //     Manual changes to this file will be overwritten if the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace FirstWebApplication
 {
@@ -21,6 +17,7 @@ namespace FirstWebApplication
     public partial class MenuDetail
     {
         public int ItemID { get; set; }
+
         [Display(Name = "Item Name")]
         [Required(ErrorMessage = "Item Name is Required..")]
         //[Remote("doesItemNameExist", "MenuItem", ErrorMessage = "Item already exists..")]
@@ -36,12 +33,19 @@ namespace FirstWebApplication
         [Required(ErrorMessage = "Price is Required..")]
         [Range(1, int.MaxValue, ErrorMessage = "Price must be positive")]
         public int Price { get; set; }
+
         public bool Veg { get; set; }
+
         public System.DateTime CreatedOn { get; set; }
+
         public string CreatedBy { get; set; }
+
         public string ModifiedBy { get; set; }
+
         public Nullable<System.DateTime> ModifiedOn { get; set; }
-    
+
+        public System.Guid UUID { get; set; }
+
         public virtual MealType MealType { get; set; }
     }
 }
