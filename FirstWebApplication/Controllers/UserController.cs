@@ -282,7 +282,7 @@ namespace FirstWebApplication.Controllers
 
             var fromEmail = new MailAddress("fun.786.beast@gmail.com", "The Imperial Spice");
             var toEmail = new MailAddress(email);
-            var fromEmailPassword = "smdyhfjercscmghf";
+            var fromEmailPassword = "*******************";
             string subject = "The Imperial Spice Account Varification..";
             string body = "<br/> Congratulation " + userName + "<br/> Your Imperial spice account is successfully created." +
                 "Please click on the below link to active your account." +
@@ -327,7 +327,7 @@ namespace FirstWebApplication.Controllers
 
             var fromEmail = new MailAddress("fun.786.beast@gmail.com", "The Imperial Spice");
             var toEmail = new MailAddress(user.Email);
-            var fromEmailPassword = "smdyhfjercscmghf";
+            var fromEmailPassword = "*****************";
             string subject = "The Imperial Spice Forgot Password..";
             string body = "<br/> Hello " + user.UserName + "<br/><br/> Click below link to reset your password. This link will expire in 5 Minutes." +
                 "<br/><a href='" + VerificationLink + "'>Reset Password</a>" + "<br/><br>" +
