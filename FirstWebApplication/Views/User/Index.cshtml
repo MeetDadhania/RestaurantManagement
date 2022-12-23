@@ -7,6 +7,7 @@
     @Styles.Render("~/Content/LoginStyle.css")
     <link href="~/Content/menu.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    @Styles.Render("~/Content/bootstrap.css")
 }
 
 <head>
@@ -14,6 +15,46 @@
     <script src="~/Scripts/jquery.validate.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
 </head>
+
+<script>
+    function showAlert() {
+        $.ajax({
+            type: "Get",
+            url: "/User/SuggestPassword/",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                var htmlstring = `<div>
+                                    Strong Password : <strong> ${response} </strong>
+                                  </div>
+                                  <button type="button" onclick="hideAlert()" style="background-color:transparent;border:hidden">
+                                    <i class="fa fa-close"></i>
+                                  </button>`
+                document.getElementById('alertcreated').innerHTML = ""
+                document.getElementById('alertcreated').insertAdjacentHTML("afterbegin", htmlstring)
+                document.getElementById('alertcreated').style.display = "flex"
+                document.getElementById('alertcreated').style.justifyContent = "space-between"
+                document.getElementById('alertcreated').classList.remove('hide')
+            },
+            failure: function (response) {
+                alert("Failure");
+            },
+            error: function (response) {
+                alert("Error");
+            }
+        });
+
+
+    }
+
+    function hideAlert() {
+        console.log(document.getElementById('alertcreated'));
+
+        document.getElementById('alertcreated').classList.add('hide')
+        document.getElementById('alertcreated').classList.remove('show')
+    }
+</script>
+
+
 
 
 <div class="wrapper">
@@ -49,6 +90,11 @@
             <span class="fas fa-key" style="margin:auto"></span>
             @*<input type="password" name="password" id="pwd" placeholder="Password">*@
             @Html.PasswordFor(s => s.Password, new { @class = "", placeholder = "Enter Password..." })
+            <button id="suggetion" onclick="showAlert()" type="button" class="btn" data-toggle="modal" data-target="#AddModalCenter" style="color: #fff;font-size: initial; margin-right: auto;width:auto; height: fit-content; align-content: center; background-color: #563D7C ">
+                <i class="fa fa-lightbulb" style="padding:0px" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div id="alertcreated" class="alert alert-info hide" role="alert">
         </div>
 
         @Html.ValidationMessageFor(s => s.ConfirmPassword, "", new { @class = "text-danger" })
@@ -71,7 +117,6 @@
             @*<input type="password" name="password" id="pwd" placeholder="Password">*@
             @Html.TextBoxFor(s => s.Mobile, new { @class = "", placeholder = "Enter Mobile..." })
         </div>
-
 
         <button type="submit" value="register" class="btn mt-3">Register</button>
     }

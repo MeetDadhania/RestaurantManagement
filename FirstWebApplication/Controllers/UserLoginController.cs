@@ -1,4 +1,5 @@
 ﻿using FirstWebApplication.Models;
+using FirstWebApplication.Utils;
 using NLog;
 using PagedList;
 using System;
@@ -59,10 +60,11 @@ namespace FirstWebApplication.Controllers
                 {
                     //get user details from DB
                     UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.UserName == userLogin.UserName).FirstOrDefault();
-
+                    var dec = Cryptography.DecryptPassword(user.Password);
                     //check user exist, password match, user is verified
-                    if (user != null && DecryptPassword(user.Password) == userLogin.Password && user.IsVerified == true)
+                    if (user != null && Cryptography.DecryptPassword(user.Password) == userLogin.Password && user.IsVerified == true)
                     {
+                        
                         //set the session 
                         Session["UserID"] = user.UserID.ToString();
                         Session["UserName"] = user.UserName;
@@ -70,20 +72,28 @@ namespace FirstWebApplication.Controllers
                         //redirect to dashboard
                         return RedirectToAction("DashBoard");
                     }
+                    //if user doesn't exist
+                    else if (user == null)
+                    {
+                        //redirect to login page with message
+                        TempData["ErrorMessage"] = "User not Exist..";
+                        return View("Index");
+                    }
                     //if user is not verified
                     else if (user.IsVerified == false)
                     {
                         //redirect to login page with message
                         TempData["ErrorMessage"] = "Account is not Verified..";
-                        return RedirectToAction("Index");
+                        return View("Index");
                     }
-                    //if user doesn't exist 
-                    else
+                    else 
                     {
-                        //redirect to login page with message
-                        TempData["ErrorMessage"] = "UserName or Password is incorrect";
-                        return RedirectToAction("Index");
+                        //return the error view with message
+                        TempData["ErrorMessage"] = "Password is incorrect..";
+                        return View("Index");
                     }
+                     
+                    
                 }
                 //if model is invalid redirect to login page
                 return RedirectToAction("Index");
@@ -237,23 +247,5 @@ namespace FirstWebApplication.Controllers
         }
         #endregion
 
-        #region password decryption algo
-        private string DecryptPassword(string password)
-        {
-            StringBuilder encryptedPassword = new StringBuilder(password);
-            for (int i = 0; i < password.Length; i++)
-            {
-                if (i % 2 != 0)
-                {
-                    encryptedPassword[i] = (char)(((int)password[i]) + 1);
-                }
-                else
-                {
-                    encryptedPassword[i] = (char)(((int)password[i]) - 1);
-                }
-            }
-            return encryptedPassword.ToString();
-        }
-        #endregion
     }
 }

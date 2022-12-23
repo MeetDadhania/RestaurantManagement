@@ -46,6 +46,7 @@ namespace FirstWebApplication.Controllers
                     //add log details user name and time
                     menuDetail.CreatedBy = Session["UserName"].ToString();
                     menuDetail.CreatedOn = DateTime.Now;
+                    menuDetail.UUID = Guid.NewGuid();
 
                     //add the details to DB and save it
                     restaurantEntities.MenuDetails.Add(menuDetail);

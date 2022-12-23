@@ -1,6 +1,8 @@
 ﻿using Antlr.Runtime;
 using FirstWebApplication;
 using FirstWebApplication.Models;
+using FirstWebApplication.Utils;
+using Microsoft.AspNetCore.WebUtilities;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.Security;
 using System.Web.Services.Description;
 
 namespace FirstWebApplication.Controllers
@@ -54,8 +57,8 @@ namespace FirstWebApplication.Controllers
                 if (ModelState.IsValid)
                 {
                     //set user properties and encrypte the password
-                    user.Password = EncryptPassword(user.Password);
-                    user.ConfirmPassword = EncryptPassword(user.ConfirmPassword);
+                    user.Password = Cryptography.EncryptPassword(user.Password);
+                    user.ConfirmPassword = Cryptography.EncryptPassword(user.ConfirmPassword);
                     user.ActivationCode = Guid.NewGuid();
 
                     //send verification mail to user for account activation
@@ -89,6 +92,9 @@ namespace FirstWebApplication.Controllers
         {
             try
             {
+                //Decrypt Activation code
+                activationCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(activationCode));
+
                 // get user details from database based on activation code
                 UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.ActivationCode.ToString() == activationCode).FirstOrDefault();
                 if (user != null)
@@ -157,6 +163,9 @@ namespace FirstWebApplication.Controllers
         {
             try
             {
+                //decrypt the activation code
+                activationCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(activationCode));
+
                 //get user details from database
                 UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.ActivationCode.ToString() == activationCode).FirstOrDefault();
                 
@@ -213,8 +222,8 @@ namespace FirstWebApplication.Controllers
                 UserRegistration user = restaurantEntities.UserRegistrations.Where(s => s.UserName == forgotUser.UserName).FirstOrDefault();
                 
                 //change the password field
-                user.Password = EncryptPassword(forgotUser.Password);
-                user.ConfirmPassword = EncryptPassword(forgotUser.Password);
+                user.Password = Cryptography.EncryptPassword(forgotUser.Password);
+                user.ConfirmPassword = Cryptography.EncryptPassword(forgotUser.Password);
 
                 //save the changes to DB
                 restaurantEntities.SaveChanges();
@@ -255,40 +264,31 @@ namespace FirstWebApplication.Controllers
             return Json(restaurantEntities.UserRegistrations.Any(x => x.UserName == UserName), JsonRequestBehavior.AllowGet);
         }
 
-        #region password encryption
-        private string EncryptPassword(string password)
+        public string SuggestPassword()
         {
-            StringBuilder encryptedPassword = new StringBuilder(password);
-            for (int i = 0; i < password.Length; i++)
-            {
-                if (i % 2 == 0)
-                {
-                    encryptedPassword[i] = (char)(((int)password[i]) + 1);
-                }
-                else
-                {
-                    encryptedPassword[i] = (char)(((int)password[i]) - 1);
-                }
-            }
-            return encryptedPassword.ToString();
+            return Membership.GeneratePassword(8, 1);
         }
-        #endregion
 
         #region send account verification mail
         [NonAction]
         private void SendVerificationEmail(string email, string userName, string activationCode)
         {
+            //encrypt activation code before send it
+            string encryptActivationCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(activationCode.ToString()));
+
             //declaration of variable and assign the value 
-            var url = "/User/VarifyAccount/" + activationCode;
+            var url = "/User/VarifyAccount/" + encryptActivationCode;
             var VerificationLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, url);
 
             var fromEmail = new MailAddress("fun.786.beast@gmail.com", "The Imperial Spice");
             var toEmail = new MailAddress(email);
-            var fromEmailPassword = "*****************";
+            var fromEmailPassword = "smdyhfjercscmghf";
             string subject = "The Imperial Spice Account Varification..";
             string body = "<br/> Congratulation " + userName + "<br/> Your Imperial spice account is successfully created." +
                 "Please click on the below link to active your account." +
-                "<br/><a href='" + VerificationLink + "'>Active Account</a>";
+                "<br/><a href='" + VerificationLink + "'>Active Account</a>" + "<br/><br>" +
+                "Regards,<br/><br/>" +
+                "The Imperial Spice";
 
             //smtp cliend configuration
             var smtp = new SmtpClient
@@ -318,15 +318,21 @@ namespace FirstWebApplication.Controllers
         {
             //Declaration of variable and assign value
             TimeSpan token = DateTime.Now - baseDate;
-            var url = "/User/ForgotPassword/" + user.ActivationCode + "?token=" + token;
+
+            // Encrypt Activation code
+            string encryptActivationCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(user.ActivationCode.ToString()));
+
+            var url = "/User/ForgotPassword/" + encryptActivationCode + "?token=" + token;
             var VerificationLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, url);
 
             var fromEmail = new MailAddress("fun.786.beast@gmail.com", "The Imperial Spice");
             var toEmail = new MailAddress(user.Email);
-            var fromEmailPassword = "*****************";
+            var fromEmailPassword = "smdyhfjercscmghf";
             string subject = "The Imperial Spice Forgot Password..";
-            string body = "<br/> Hello " + user.UserName + "<br/> Click below link to reset your password. This link will expire in 5 Minutes." +
-                "<br/><a href='" + VerificationLink + "'>Reset Password</a>";
+            string body = "<br/> Hello " + user.UserName + "<br/><br/> Click below link to reset your password. This link will expire in 5 Minutes." +
+                "<br/><a href='" + VerificationLink + "'>Reset Password</a>" + "<br/><br>" +
+                "Regards,<br/><br/>" +
+                "The Imperial Spice";
 
             //smtp cliend configuration
             var smtp = new SmtpClient
