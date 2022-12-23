@@ -12,3 +12,5 @@ Functionality
 7. Encryptiona of password 
 8. created trigger on menu item table on delete to save the data on archive table
 9. logout button on dashboard page
+10. Email conformation and forgot password link send to email
+11. Toastr and Modal popup 
