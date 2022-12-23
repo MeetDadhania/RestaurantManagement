@@ -14,3 +14,4 @@ Functionality
 9. logout button on dashboard page
 10. Email conformation and forgot password link send to email
 11. Toastr and Modal popup 
+12. Suggest strong password
